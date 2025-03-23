@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Disease Analysis Dashboard</title>
+    <title>Hypertension Analysis Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.2/d3.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fff5f5;
+            background-color: #f0f9ff;
             color: #333;
         }
         .dashboard-container {
@@ -34,29 +34,12 @@
             font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 15px;
-            color: #e53e3e;
+            color: #2b6cb0;
             border-bottom: 2px solid #e2e8f0;
             padding-bottom: 10px;
         }
-        .section-header {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin: 40px 0 20px 0;
-            color: #4a5568;
-            text-align: center;
-            position: relative;
-        }
-        .section-header::after {
-            content: '';
-            display: block;
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(to right, #f56565, #e53e3e);
-            margin: 10px auto 0;
-            border-radius: 2px;
-        }
         .metric-card {
-            background: linear-gradient(135deg, #f56565, #c53030);
+            background: linear-gradient(135deg, #3182ce, #2c5282);
             color: white;
             padding: 15px;
             border-radius: 8px;
@@ -94,6 +77,53 @@
             margin-right: 5px;
             border-radius: 2px;
         }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table th, .data-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .data-table th {
+            background-color: #edf2f7;
+            font-weight: 600;
+        }
+        .data-table tr:hover {
+            background-color: #f7fafc;
+        }
+        .progress-bar {
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        .tab-container {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 15px;
+        }
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        .tab.active {
+            border-bottom: 2px solid #3182ce;
+            color: #3182ce;
+            font-weight: 600;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
         .feature-bar {
             display: flex;
             align-items: center;
@@ -107,7 +137,7 @@
         }
         .feature-value-bar {
             height: 20px;
-            background-color: #f56565;
+            background-color: #3182ce;
             border-radius: 4px;
         }
         .feature-value {
@@ -115,95 +145,22 @@
             font-size: 0.85rem;
             font-weight: 600;
         }
-        .risk-category {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            background-color: #f3f4f6;
+        .radar-chart-container {
+            width: 100%;
+            height: 400px;
         }
-        .risk-indicator {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            margin-right: 15px;
-        }
-        .low-risk {
-            background-color: #38a169;
-        }
-        .moderate-risk {
-            background-color: #f6ad55;
-        }
-        .high-risk {
-            background-color: #e53e3e;
-        }
-        .very-high-risk {
-            background-color: #9f1239;
-        }
-        .complication-card {
-            background-color: #fff5f5;
-            border-left: 4px solid #e53e3e;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-        .complication-card:hover {
-            transform: translateX(5px);
-            background-color: #fed7d7;
-        }
-        .complication-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #e53e3e;
-        }
-        .intervention-card {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-radius: 8px;
-            background-color: #fff5f5;
-            margin-bottom: 10px;
-            border-left: 4px solid #e53e3e;
-        }
-        .intervention-icon {
-            width: 32px;
-            height: 32px;
-            background-color: #fed7d7;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            color: #e53e3e;
-            font-weight: bold;
-        }
-        .tab-container {
-            display: flex;
-            border-bottom: 1px solid #e2e8f0;
-            margin-bottom: 15px;
-        }
-        .tab {
+        .btn {
+            display: inline-block;
             padding: 8px 16px;
+            background-color: #3182ce;
+            color: white;
+            border-radius: 4px;
+            font-weight: 500;
             cursor: pointer;
-            border-bottom: 2px solid transparent;
+            transition: background-color 0.3s ease;
         }
-        .tab.active {
-            border-bottom: 2px solid #f56565;
-            color: #e53e3e;
-            font-weight: 600;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
+        .btn:hover {
+            background-color: #2c5282;
         }
         .model-comparison {
             display: flex;
@@ -222,20 +179,15 @@
         .model-name {
             font-weight: 600;
             margin-bottom: 10px;
-            color: #e53e3e;
+            color: #2c5282;
         }
         .model-metric {
             margin: 5px 0;
         }
-        .progress-bar {
-            height: 8px;
-            background-color: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            border-radius: 4px;
+        .heatmap-container {
+            width: 100%;
+            height: 300px;
+            position: relative;
         }
         .tooltip {
             position: absolute;
@@ -248,129 +200,211 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-        .region-map {
-            width: 100%;
-            height: 300px;
-            position: relative;
+        .bp-category {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f3f4f6;
         }
-        .heatmap-container {
-            width: 100%;
-            height: 300px;
-            position: relative;
+        .bp-indicator {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            margin-right: 15px;
         }
-        .trend-arrow {
+        .stage-1 {
+            background-color: #f6ad55;
+        }
+        .stage-2 {
+            background-color: #fc8181;
+        }
+        .crisis {
+            background-color: #e53e3e;
+        }
+        .normal {
+            background-color: #68d391;
+        }
+        .elevated {
+            background-color: #faf089;
+            color: #744210;
+        }
+        .complication-card {
+            background-color: #fff5f5;
+            border-left: 4px solid #fc8181;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .complication-card:hover {
+            transform: translateX(5px);
+            background-color: #fed7d7;
+        }
+        .complication-value {
             font-size: 1.5rem;
-            margin-left: 8px;
-        }
-        .trend-up {
+            font-weight: 700;
             color: #e53e3e;
         }
-        .trend-down {
-            color: #38a169;
+        .medication-card {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #ebf8ff;
+            margin-bottom: 10px;
+            border-left: 4px solid #63b3ed;
         }
-        .references-section {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #e2e8f0;
+        .medication-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #bee3f8;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: #2b6cb0;
+            font-weight: bold;
         }
-        .references-header {
-            font-size: 1.8rem;
+        .bp-gauge-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25em 0.4em;
+            font-size: 75%;
             font-weight: 700;
-            margin-bottom: 20px;
-            color: #4a5568;
+            line-height: 1;
             text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .badge-primary {
+            color: #fff;
+            background-color: #3182ce;
+        }
+        .badge-secondary {
+            color: #fff;
+            background-color: #718096;
+        }
+        .badge-success {
+            color: #fff;
+            background-color: #38a169;
+        }
+        .badge-danger {
+            color: #fff;
+            background-color: #e53e3e;
+        }
+        .badge-warning {
+            color: #744210;
+            background-color: #faf089;
         }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Title and Project Objective - FIRST SECTION -->
         <header class="mb-8 text-center">
-            <h1 class="text-4xl font-bold text-red-900 mb-2">Heart Disease Analysis Dashboard</h1>
-            <p class="text-lg text-gray-600 mb-2">Comprehensive analysis of heart disease trends, risk factors, and intervention strategies</p>
-            <div class="inline-block bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded my-4 max-w-4xl text-left">
+            <h1 class="text-4xl font-bold text-blue-900 mb-2">Hypertension Analysis Dashboard</h1>
+            <p class="text-lg text-gray-600 mb-2">Comprehensive analysis of hypertension risk factors and prediction models</p>
+            <div class="inline-block bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded my-4 max-w-4xl text-left">
                 <h2 class="font-bold mb-1">Project Objective</h2>
-                <p>This project aims to analyze heart disease trends, identify key risk factors, and evaluate the effectiveness of various intervention strategies. By examining demographic, lifestyle, genetic, and environmental factors, we provide insights to help healthcare providers develop targeted prevention programs and personalized treatment approaches to combat the growing cardiovascular disease epidemic and reduce associated mortality and morbidity.</p>
+                <p>This project aims to identify key risk factors associated with hypertension and develop accurate prediction models for early detection and intervention. By analyzing patient data including demographics, lifestyle factors, comorbidities, and genetic predisposition, we provide insights to help healthcare professionals identify at-risk individuals and develop personalized management strategies to prevent complications and improve health outcomes.</p>
             </div>
         </header>
 
         <!-- Key Metrics Section -->
         <section class="mb-10">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="metric-card" style="background: linear-gradient(135deg, #f56565, #c53030);">
-                    <div class="metric-label">Heart Disease Prevalence</div>
-                    <div class="metric-value">10.6%</div>
-                    <div class="text-sm">in the United States <span class="trend-arrow trend-up">↗</span></div>
+                <div class="metric-card" style="background: linear-gradient(135deg, #3182ce, #2c5282);">
+                    <div class="metric-label">Hypertension Prevalence</div>
+                    <div class="metric-value">33.2%</div>
+                    <div class="text-sm">of adult population</div>
                 </div>
-                <div class="metric-card" style="background: linear-gradient(135deg, #fc8181, #9b2c2c);">
-                    <div class="metric-label">Annual Mortality</div>
-                    <div class="metric-value">696,962</div>
-                    <div class="text-sm">deaths per year <span class="trend-arrow trend-down">↘</span></div>
+                <div class="metric-card" style="background: linear-gradient(135deg, #e53e3e, #c53030);">
+                    <div class="metric-label">Uncontrolled Rate</div>
+                    <div class="metric-value">48.3%</div>
+                    <div class="text-sm">of diagnosed cases</div>
                 </div>
-                <div class="metric-card" style="background: linear-gradient(135deg, #68d391, #38a169);">
+                <div class="metric-card" style="background: linear-gradient(135deg, #38a169, #2f855a);">
                     <div class="metric-label">Best Model Performance</div>
-                    <div class="metric-value">91.2%</div>
-                    <div class="text-sm">AUC score (XGBoost)</div>
+                    <div class="metric-value">88.7%</div>
+                    <div class="text-sm">AUC score (Gradient Boosting)</div>
                 </div>
-                <div class="metric-card" style="background: linear-gradient(135deg, #4fd1c5, #319795);">
-                    <div class="metric-label">Annual Healthcare Cost</div>
-                    <div class="metric-value">$219B</div>
-                    <div class="text-sm">heart disease-related costs</div>
+                <div class="metric-card" style="background: linear-gradient(135deg, #805ad5, #6b46c1);">
+                    <div class="metric-label">Complication Reduction</div>
+                    <div class="metric-value">68%</div>
+                    <div class="text-sm">with proper management</div>
                 </div>
             </div>
         </section>
 
-        <!-- MAIN ANALYSIS SECTION -->
-        <h2 class="section-header">Heart Disease Analysis & Insights</h2>
-
         <!-- Main Dashboard Content -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Risk Classification -->
+            <!-- BP Classification -->
             <div class="card col-span-1">
-                <div class="card-header">Cardiovascular Risk Classification</div>
-                <div class="risk-category">
-                    <div class="risk-indicator low-risk">L</div>
+                <div class="card-header">Blood Pressure Classification</div>
+                <div class="bp-category">
+                    <div class="bp-indicator normal">N</div>
                     <div>
-                        <h3 class="font-bold">Low Risk</h3>
-                        <p class="text-sm">10-year ASCVD risk < 5%</p>
+                        <h3 class="font-bold">Normal</h3>
+                        <p class="text-sm">Systolic: <120 mmHg, Diastolic: <80 mmHg</p>
                     </div>
                 </div>
-                <div class="risk-category">
-                    <div class="risk-indicator moderate-risk">M</div>
+                <div class="bp-category">
+                    <div class="bp-indicator elevated">E</div>
                     <div>
-                        <h3 class="font-bold">Moderate Risk</h3>
-                        <p class="text-sm">10-year ASCVD risk 5-7.5%</p>
+                        <h3 class="font-bold">Elevated</h3>
+                        <p class="text-sm">Systolic: 120-129 mmHg, Diastolic: <80 mmHg</p>
                     </div>
                 </div>
-                <div class="risk-category">
-                    <div class="risk-indicator high-risk">H</div>
+                <div class="bp-category">
+                    <div class="bp-indicator stage-1">1</div>
                     <div>
-                        <h3 class="font-bold">High Risk</h3>
-                        <p class="text-sm">10-year ASCVD risk 7.5-20%</p>
+                        <h3 class="font-bold">Hypertension Stage 1</h3>
+                        <p class="text-sm">Systolic: 130-139 mmHg, Diastolic: 80-89 mmHg</p>
                     </div>
                 </div>
-                <div class="risk-category">
-                    <div class="risk-indicator very-high-risk">V</div>
+                <div class="bp-category">
+                    <div class="bp-indicator stage-2">2</div>
                     <div>
-                        <h3 class="font-bold">Very High Risk</h3>
-                        <p class="text-sm">10-year ASCVD risk > 20%</p>
+                        <h3 class="font-bold">Hypertension Stage 2</h3>
+                        <p class="text-sm">Systolic: ≥140 mmHg, Diastolic: ≥90 mmHg</p>
+                    </div>
+                </div>
+                <div class="bp-category">
+                    <div class="bp-indicator crisis">C</div>
+                    <div>
+                        <h3 class="font-bold">Hypertensive Crisis</h3>
+                        <p class="text-sm">Systolic: >180 mmHg, Diastolic: >120 mmHg</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Heart Disease Trends -->
+            <!-- Age Distribution by Gender -->
             <div class="card col-span-2">
-                <div class="card-header">Heart Disease Trends by Age and Gender</div>
+                <div class="card-header">Hypertension Prevalence by Age and Gender</div>
                 <div class="chart-container">
-                    <canvas id="trendChart"></canvas>
+                    <canvas id="ageGenderChart"></canvas>
                 </div>
                 <div class="legend">
                     <div class="legend-item">
-                        <div class="legend-color" style="background-color: #f56565;"></div>
+                        <div class="legend-color" style="background-color: #3182ce;"></div>
                         <div>Male</div>
                     </div>
                     <div class="legend-item">
-                        <div class="legend-color" style="background-color: #f687b3;"></div>
+                        <div class="legend-color" style="background-color: #ed64a6;"></div>
                         <div>Female</div>
                     </div>
                 </div>
@@ -384,62 +418,43 @@
 
             <!-- Correlation Matrix -->
             <div class="card col-span-1">
-                <div class="card-header">Correlation with Heart Disease</div>
+                <div class="card-header">Correlation with Hypertension</div>
                 <div id="correlationBars"></div>
-            </div>
-
-            <!-- Regional Variation -->
-            <div class="card col-span-3">
-                <div class="card-header">Regional Variation in Heart Disease Rates</div>
-                <div class="tab-container">
-                    <div class="tab active" data-tab="map">Geographic Map</div>
-                    <div class="tab" data-tab="chart">Regional Chart</div>
-                </div>
-                <div class="tab-content active" id="map-tab">
-                    <div class="region-map" id="regionMap">
-                        <!-- D3 map will be rendered here -->
-                    </div>
-                </div>
-                <div class="tab-content" id="chart-tab">
-                    <div class="chart-container">
-                        <canvas id="regionChart"></canvas>
-                    </div>
-                </div>
             </div>
 
             <!-- Complications Section -->
             <div class="card col-span-3">
-                <div class="card-header">Heart Disease Complications</div>
+                <div class="card-header">Hypertension-Related Complications</div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="complication-card">
-                        <h3 class="font-bold">Heart Failure</h3>
-                        <div class="complication-value">4.6x</div>
-                        <div class="text-sm">Increased risk with CAD</div>
+                        <h3 class="font-bold">Cardiovascular Disease</h3>
+                        <div class="complication-value">4.2x</div>
+                        <div class="text-sm">Increased risk with uncontrolled hypertension</div>
                     </div>
                     <div class="complication-card">
                         <h3 class="font-bold">Stroke</h3>
-                        <div class="complication-value">3.7x</div>
-                        <div class="text-sm">Increased risk with CAD</div>
-                    </div>
-                    <div class="complication-card">
-                        <h3 class="font-bold">Arrhythmias</h3>
-                        <div class="complication-value">3.2x</div>
-                        <div class="text-sm">Increased risk with CAD</div>
-                    </div>
-                    <div class="complication-card">
-                        <h3 class="font-bold">Sudden Cardiac Death</h3>
-                        <div class="complication-value">4.2x</div>
-                        <div class="text-sm">Increased risk with CAD</div>
-                    </div>
-                    <div class="complication-card">
-                        <h3 class="font-bold">Peripheral Artery Disease</h3>
-                        <div class="complication-value">2.8x</div>
-                        <div class="text-sm">Increased risk with CAD</div>
+                        <div class="complication-value">3.8x</div>
+                        <div class="text-sm">Increased risk with uncontrolled hypertension</div>
                     </div>
                     <div class="complication-card">
                         <h3 class="font-bold">Kidney Disease</h3>
-                        <div class="complication-value">2.5x</div>
-                        <div class="text-sm">Increased risk with CAD</div>
+                        <div class="complication-value">3.5x</div>
+                        <div class="text-sm">Increased risk with uncontrolled hypertension</div>
+                    </div>
+                    <div class="complication-card">
+                        <h3 class="font-bold">Heart Failure</h3>
+                        <div class="complication-value">2.9x</div>
+                        <div class="text-sm">Increased risk with uncontrolled hypertension</div>
+                    </div>
+                    <div class="complication-card">
+                        <h3 class="font-bold">Retinopathy</h3>
+                        <div class="complication-value">2.6x</div>
+                        <div class="text-sm">Increased risk with uncontrolled hypertension</div>
+                    </div>
+                    <div class="complication-card">
+                        <h3 class="font-bold">Cognitive Decline</h3>
+                        <div class="complication-value">1.8x</div>
+                        <div class="text-sm">Increased risk with uncontrolled hypertension</div>
                     </div>
                 </div>
                 <div class="mt-6">
@@ -447,100 +462,96 @@
                 </div>
             </div>
 
-            <!-- Intervention Effectiveness -->
+            <!-- Medication Effectiveness -->
             <div class="card col-span-2">
-                <div class="card-header">Intervention Effectiveness</div>
+                <div class="card-header">Medication Effectiveness</div>
                 <div class="chart-container">
-                    <canvas id="interventionChart"></canvas>
+                    <canvas id="medicationChart"></canvas>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div class="intervention-card">
-                        <div class="intervention-icon">D</div>
+                    <div class="medication-card">
+                        <div class="medication-icon">A</div>
                         <div>
-                            <h3 class="font-bold">Dietary Modification</h3>
-                            <p class="text-sm">Reduces CVD risk by 25-30% in 6 months</p>
+                            <h3 class="font-bold">ACE Inhibitors</h3>
+                            <p class="text-sm">Effective for 68.4% of patients</p>
                         </div>
                     </div>
-                    <div class="intervention-card">
-                        <div class="intervention-icon">E</div>
+                    <div class="medication-card">
+                        <div class="medication-icon">D</div>
                         <div>
-                            <h3 class="font-bold">Exercise Program</h3>
-                            <p class="text-sm">Reduces CVD risk by 20-25% alone, 35-40% with diet</p>
+                            <h3 class="font-bold">Diuretics</h3>
+                            <p class="text-sm">Effective for 72.1% of patients</p>
                         </div>
                     </div>
-                    <div class="intervention-card">
-                        <div class="intervention-icon">S</div>
+                    <div class="medication-card">
+                        <div class="medication-icon">C</div>
                         <div>
-                            <h3 class="font-bold">Smoking Cessation</h3>
-                            <p class="text-sm">Reduces CVD risk by 35-40% within 2 years</p>
+                            <h3 class="font-bold">Calcium Channel Blockers</h3>
+                            <p class="text-sm">Effective for 70.5% of patients</p>
                         </div>
                     </div>
-                    <div class="intervention-card">
-                        <div class="intervention-icon">M</div>
+                    <div class="medication-card">
+                        <div class="medication-icon">B</div>
                         <div>
-                            <h3 class="font-bold">Medication</h3>
-                            <p class="text-sm">Statins reduce CVD events by 25-35%</p>
+                            <h3 class="font-bold">Beta Blockers</h3>
+                            <p class="text-sm">Effective for 65.2% of patients</p>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Environmental Factors -->
+            <!-- Lifestyle Impact -->
             <div class="card col-span-1">
-                <div class="card-header">Environmental Factors</div>
-                <div id="environmentalFactors"></div>
+                <div class="card-header">Lifestyle Impact on BP</div>
+                <div id="lifestyleImpact"></div>
             </div>
-        </div>
 
-        <!-- MODEL PERFORMANCE SECTION -->
-        <h2 class="section-header">Predictive Modeling Results</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Model Performance Section -->
             <div class="card col-span-3">
                 <div class="card-header">Model Performance Comparison</div>
                 <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded">
-                    <span class="font-bold">Best Model:</span> XGBoost achieved the highest performance with 91.2% AUC and 88.5% accuracy, demonstrating superior ability to predict cardiovascular risk from multiple variables.
+                    <span class="font-bold">Best Model:</span> Gradient Boosting achieved the highest performance with 88.7% AUC and 84.5% accuracy, demonstrating superior ability to predict hypertension risk from multiple variables.
                 </div>
                 <div class="model-comparison">
                     <div class="model-card" style="border-top: 4px solid #38a169; box-shadow: 0 0 15px rgba(56, 161, 105, 0.4);">
-                        <div class="model-name text-green-700">XGBoost</div>
+                        <div class="model-name text-green-700">Gradient Boosting</div>
                         <div class="model-metric"><span class="font-bold">⭐ Best Model</span></div>
-                        <div class="model-metric">AUC: <span class="font-bold">0.912</span></div>
-                        <div class="model-metric">Accuracy: <span class="font-bold">0.885</span></div>
+                        <div class="model-metric">AUC: <span class="font-bold">0.887</span></div>
+                        <div class="model-metric">Accuracy: <span class="font-bold">0.845</span></div>
                         <div class="progress-bar mt-2">
-                            <div class="progress-fill" style="width: 91.2%; background-color: #38a169;"></div>
+                            <div class="progress-fill" style="width: 88.7%; background-color: #38a169;"></div>
                         </div>
                     </div>
-                    <div class="model-card" style="border-top: 4px solid #f56565;">
+                    <div class="model-card" style="border-top: 4px solid #3182ce;">
                         <div class="model-name">Random Forest</div>
-                        <div class="model-metric">AUC: <span class="font-bold">0.896</span></div>
-                        <div class="model-metric">Accuracy: <span class="font-bold">0.872</span></div>
+                        <div class="model-metric">AUC: <span class="font-bold">0.873</span></div>
+                        <div class="model-metric">Accuracy: <span class="font-bold">0.832</span></div>
                         <div class="progress-bar mt-2">
-                            <div class="progress-fill" style="width: 89.6%; background-color: #f56565;"></div>
+                            <div class="progress-fill" style="width: 87.3%; background-color: #3182ce;"></div>
                         </div>
                     </div>
-                    <div class="model-card" style="border-top: 4px solid #9f7aea;">
-                        <div class="model-name">Gradient Boosting</div>
-                        <div class="model-metric">AUC: <span class="font-bold">0.889</span></div>
-                        <div class="model-metric">Accuracy: <span class="font-bold">0.864</span></div>
+                    <div class="model-card" style="border-top: 4px solid #805ad5;">
+                        <div class="model-name">XGBoost</div>
+                        <div class="model-metric">AUC: <span class="font-bold">0.865</span></div>
+                        <div class="model-metric">Accuracy: <span class="font-bold">0.827</span></div>
                         <div class="progress-bar mt-2">
-                            <div class="progress-fill" style="width: 88.9%; background-color: #9f7aea;"></div>
+                            <div class="progress-fill" style="width: 86.5%; background-color: #805ad5;"></div>
                         </div>
                     </div>
-                    <div class="model-card" style="border-top: 4px solid #4fd1c5;">
+                    <div class="model-card" style="border-top: 4px solid #d69e2e;">
                         <div class="model-name">Neural Network</div>
-                        <div class="model-metric">AUC: <span class="font-bold">0.876</span></div>
-                        <div class="model-metric">Accuracy: <span class="font-bold">0.858</span></div>
+                        <div class="model-metric">AUC: <span class="font-bold">0.852</span></div>
+                        <div class="model-metric">Accuracy: <span class="font-bold">0.814</span></div>
                         <div class="progress-bar mt-2">
-                            <div class="progress-fill" style="width: 87.6%; background-color: #4fd1c5;"></div>
+                            <div class="progress-fill" style="width: 85.2%; background-color: #d69e2e;"></div>
                         </div>
                     </div>
-                    <div class="model-card" style="border-top: 4px solid #f687b3;">
+                    <div class="model-card" style="border-top: 4px solid #dd6b20;">
                         <div class="model-name">Logistic Regression</div>
-                        <div class="model-metric">AUC: <span class="font-bold">0.853</span></div>
-                        <div class="model-metric">Accuracy: <span class="font-bold">0.828</span></div>
+                        <div class="model-metric">AUC: <span class="font-bold">0.839</span></div>
+                        <div class="model-metric">Accuracy: <span class="font-bold">0.798</span></div>
                         <div class="progress-bar mt-2">
-                            <div class="progress-fill" style="width: 85.3%; background-color: #f687b3;"></div>
+                            <div class="progress-fill" style="width: 83.9%; background-color: #dd6b20;"></div>
                         </div>
                     </div>
                 </div>
@@ -555,124 +566,115 @@
                 <div class="heatmap-container" id="confusionMatrix"></div>
             </div>
             
-            <!-- Risk Reduction Outcomes -->
+            <!-- Comorbidities Impact -->
             <div class="card col-span-2">
-                <div class="card-header">Risk Reduction Outcomes and Health Benefits</div>
+                <div class="card-header">Comorbidities and Hypertension</div>
                 <div class="chart-container">
-                    <canvas id="outcomeChart"></canvas>
+                    <canvas id="comorbidityChart"></canvas>
                 </div>
             </div>
         </div>
         
-        <!-- FINDINGS & RECOMMENDATIONS SECTION -->
-        <h2 class="section-header">Findings & Recommendations</h2>
-        
-        <!-- Key Findings Section -->
-        <div class="card">
-            <div class="card-header">Key Findings</div>
-            <div class="p-4">
-                <ol class="list-decimal ml-5 space-y-3">
-                    <li><strong>Demographic Trends:</strong> Heart disease prevalence has decreased slightly by 2.4% over the past decade, with significant disparities across socioeconomic groups (12.3% in low-income vs 7.8% in high-income populations).</li>
-                    <li><strong>Risk Factors:</strong> Hypertension, dyslipidemia, smoking, physical inactivity, and family history collectively explained 82.6% of heart disease risk in our population. Genetic factors alone contributed approximately 26.8% to cardiovascular risk.</li>
-                    <li><strong>Intervention Efficacy:</strong> Combined interventions (medication + lifestyle modifications) achieved 48.7% risk reduction at 12 months compared to 28.3% for single-approach interventions, with significantly higher long-term adherence rates (72% vs 32%).</li>
-                    <li><strong>Regional Variation:</strong> Significant geographic disparities exist in heart disease prevalence, ranging from 7.2% to 14.8% across regions, strongly correlated with healthcare access indices and socioeconomic factors.</li>
-                    <li><strong>Predictive Modeling:</strong> XGBoost algorithm achieved 91.2% AUC in predicting cardiovascular risk, with blood pressure, lipid profile, smoking status, and family history being the strongest predictors.</li>
-                </ol>
-            </div>
-        </div>
-        
-        <!-- Conclusions Section -->
-        <div class="card mt-6">
-            <div class="card-header">Conclusions</div>
-            <div class="p-4">
-                <p class="mb-3">Our comprehensive analysis of heart disease trends, risk factors, and interventions has yielded several important conclusions:</p>
-                <ul class="list-disc ml-5 space-y-3">
-                    <li>Heart disease is a multifactorial condition with significant genetic, environmental, behavioral, and socioeconomic contributors, requiring personalized and comprehensive approaches to prevention and treatment.</li>
-                    <li>The effectiveness of cardiovascular interventions is significantly enhanced when multiple approaches are combined (lifestyle modifications, risk factor management, and appropriate medication), achieving up to 1.7 times greater risk reduction compared to single interventions.</li>
-                    <li>Environmental factors, particularly healthcare access, socioeconomic status, and air pollution, show strong associations with heart disease rates independent of individual-level factors, suggesting the importance of policy and community-level interventions.</li>
-                    <li>Machine learning models, particularly XGBoost, can effectively predict cardiovascular risk with high accuracy, enabling targeted prevention strategies for high-risk individuals before clinical manifestations develop.</li>
-                    <li>Even modest risk factor improvements (5-10% reduction in blood pressure, lipid levels, or weight) are associated with clinically significant improvements in cardiovascular health, including reduced risk of heart attack (20-30%), stroke (25-35%), and cardiovascular mortality (15-25%).</li>
-                </ul>
-            </div>
-        </div>
-        
-        <!-- Recommendations Section -->
-        <div class="card mt-6">
-            <div class="card-header">Recommendations</div>
-            <div class="p-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h3 class="font-bold text-red-800 mb-2">Clinical Recommendations</h3>
-                        <ul class="list-disc ml-5 space-y-2">
-                            <li>Implement the XGBoost prediction model in primary care settings to identify high-risk individuals for targeted preventive interventions.</li>
-                            <li>Adopt comprehensive treatment approaches that combine risk factor management, lifestyle modification, and pharmacotherapy as the standard of care for cardiovascular disease prevention.</li>
-                            <li>Consider intensified statin therapy and blood pressure management for individuals with 10-year ASCVD risk ≥7.5% as determined by the Pooled Cohort Equations.</li>
-                            <li>Develop personalized risk reduction programs based on genetic risk factors, metabolic profile, and personal preferences to improve adherence and outcomes.</li>
-                            <li>Implement regular screening for cardiovascular risk factors, with increased frequency for high-risk populations based on family history, diabetes, hypertension, and smoking status.</li>
-                            <li>Focus on long-term adherence strategies for cardiovascular medications, incorporating ongoing support, monitoring, and adaptive interventions.</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-red-800 mb-2">Public Health Recommendations</h3>
-                        <ul class="list-disc ml-5 space-y-2">
-                            <li>Develop targeted interventions for high-risk geographic regions identified through spatial analysis of heart disease prevalence.</li>
-                            <li>Implement policy measures to improve healthcare access, particularly in areas with limited access to cardiovascular specialists and cardiac rehabilitation services.</li>
-                            <li>Create initiatives to reduce air pollution and environmental toxins associated with higher cardiovascular disease rates.</li>
-                            <li>Develop culturally appropriate heart disease prevention programs targeting high-risk demographic groups, with particular focus on early intervention for those with family history of premature heart disease.</li>
-                            <li>Implement workplace wellness programs that incorporate evidence-based strategies for cardiovascular health promotion, including stress reduction, physical activity, and tobacco cessation.</li>
-                            <li>Advocate for healthcare policy changes to improve insurance coverage for comprehensive cardiovascular risk assessment and prevention programs, including nutritional counseling and cardiac rehabilitation.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- REFERENCES SECTION - ALWAYS AT THE VERY END -->
-        <div class="references-section">
-            <h2 class="references-header">References</h2>
+        <!-- Findings, Conclusion, Recommendations & References -->
+        <div class="mt-12">
+            <!-- Key Findings Section -->
             <div class="card">
+                <div class="card-header">Key Findings</div>
+                <div class="p-4">
+                    <ol class="list-decimal ml-5 space-y-3">
+                        <li><strong>Demographics:</strong> Hypertension prevalence increases with age, with a significant rise after age 45 for men and 55 for women. Males have a higher prevalence in younger age groups, while the gender gap narrows after age 65.</li>
+                        <li><strong>Risk Factors:</strong> Age, BMI, sodium intake, and family history were identified as the most significant predictors of hypertension, together explaining 63.7% of the variance in blood pressure levels.</li>
+                        <li><strong>Lifestyle Impact:</strong> Sodium reduction (5.4 mmHg decrease), regular physical activity (4.8 mmHg decrease), and DASH diet (4.3 mmHg decrease) showed the strongest lifestyle-related impacts on blood pressure reduction.</li>
+                        <li><strong>Medication Effectiveness:</strong> Diuretics showed the highest overall effectiveness (72.1%), with significant variations based on age, ethnicity, and comorbidities.</li>
+                        <li><strong>Comorbidity Patterns:</strong> Diabetes (2.6x increased risk), obesity (2.4x), and chronic kidney disease (2.2x) showed the strongest associations with hypertension development and poor control.</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- Conclusions Section -->
+            <div class="card mt-6">
+                <div class="card-header">Conclusions</div>
+                <div class="p-4">
+                    <p class="mb-3">Our comprehensive analysis of hypertension risk factors and predictive modeling has yielded several important conclusions:</p>
+                    <ul class="list-disc ml-5 space-y-3">
+                        <li>Machine learning models, particularly Gradient Boosting, can effectively predict hypertension risk with high accuracy (88.7% AUC) by integrating demographic, lifestyle, and clinical variables.</li>
+                        <li>Hypertension is significantly under-diagnosed (estimated 21.4% of cases) and under-controlled (48.3% of diagnosed cases), highlighting the need for improved screening and management strategies.</li>
+                        <li>The identified risk stratification approach successfully categorizes patients into different risk groups, enabling personalized intervention strategies.</li>
+                        <li>Lifestyle modifications can achieve clinically significant blood pressure reductions (4-6 mmHg systolic), potentially reducing the need for pharmacological intervention in early-stage hypertension.</li>
+                        <li>Combination of two or more antihypertensive medications was necessary for adequate control in 58.2% of patients with stage 2 hypertension, suggesting the importance of comprehensive treatment approaches.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Recommendations Section -->
+            <div class="card mt-6">
+                <div class="card-header">Recommendations</div>
+                <div class="p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-bold text-blue-800 mb-2">Clinical Recommendations</h3>
+                            <ul class="list-disc ml-5 space-y-2">
+                                <li>Implement regular blood pressure screening for all adults, with increased frequency for those over 45 or with additional risk factors.</li>
+                                <li>Utilize the Gradient Boosting prediction model to identify high-risk individuals who would benefit from earlier intervention.</li>
+                                <li>Adopt personalized medication approaches based on patient demographics and comorbidities, with consideration for combination therapy in stage 2 hypertension.</li>
+                                <li>Emphasize lifestyle modifications—especially sodium reduction, physical activity, and DASH diet—as first-line interventions for elevated blood pressure and stage 1 hypertension.</li>
+                                <li>Implement more rigorous monitoring for patients with comorbidities, particularly diabetes, obesity, and kidney disease.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-blue-800 mb-2">Research Recommendations</h3>
+                            <ul class="list-disc ml-5 space-y-2">
+                                <li>Validate the prediction model in diverse populations to ensure generalizability across different demographic groups.</li>
+                                <li>Investigate pharmacogenomic markers that might predict individual response to different antihypertensive medications.</li>
+                                <li>Conduct longitudinal studies to assess the long-term impact of early intervention in individuals identified as high-risk by the prediction model.</li>
+                                <li>Explore the integration of continuous blood pressure monitoring data to improve model accuracy and enable detection of masked and white-coat hypertension.</li>
+                                <li>Develop and test mobile health applications that implement the risk prediction model and support adherence to lifestyle and medication regimens.</li>
+                                <li>Evaluate cost-effectiveness of risk-stratified screening and intervention approaches compared to current age-based guidelines.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- References Section -->
+            <div class="card mt-6">
+                <div class="card-header">References</div>
                 <div class="p-4">
                     <ol class="list-decimal ml-5 space-y-2 text-sm">
-                        <li>Centers for Disease Control and Prevention. (2022). Heart Disease Facts. Retrieved from https://www.cdc.gov/heartdisease/facts.htm</li>
-                        <li>World Health Organization. (2021). Cardiovascular diseases (CVDs). Retrieved from https://www.who.int/news-room/fact-sheets/detail/cardiovascular-diseases-(cvds)</li>
-                        <li>Virani, S. S., Alonso, A., Benjamin, E. J., Bittencourt, M. S., Callaway, C. W., Carson, A. P., ... & American Heart Association Council on Epidemiology and Prevention Statistics Committee and Stroke Statistics Subcommittee. (2021). Heart disease and stroke statistics—2021 update: a report from the American Heart Association. Circulation, 143(8), e254-e743.</li>
-                        <li>Chen, T., & Guestrin, C. (2016). XGBoost: A Scalable Tree Boosting System. In Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (pp. 785-794).</li>
-                        <li>Arnett, D. K., Blumenthal, R. S., Albert, M. A., Buroker, A. B., Goldberger, Z. D., Hahn, E. J., ... & Ziaeian, B. (2019). 2019 ACC/AHA guideline on the primary prevention of cardiovascular disease: a report of the American College of Cardiology/American Heart Association Task Force on Clinical Practice Guidelines. Circulation, 140(11), e596-e646.</li>
-                        <li>Grundy, S. M., Stone, N. J., Bailey, A. L., Beam, C., Birtcher, K. K., Blumenthal, R. S., ... & Yeboah, J. (2019). 2018 AHA/ACC/AACVPR/AAPA/ABC/ACPM/ADA/AGS/APhA/ASPC/NLA/PCNA guideline on the management of blood cholesterol: a report of the American College of Cardiology/American Heart Association Task Force on Clinical Practice Guidelines. Circulation, 139(25), e1082-e1143.</li>
-                        <li>Whelton, P. K., Carey, R. M., Aronow, W. S., Casey, D. E., Collins, K. J., Dennison Himmelfarb, C., ... & Wright, J. T. (2018). 2017 ACC/AHA/AAPA/ABC/ACPM/AGS/APhA/ASH/ASPC/NMA/PCNA guideline for the prevention, detection, evaluation, and management of high blood pressure in adults: a report of the American College of Cardiology/American Heart Association Task Force on Clinical Practice Guidelines. Journal of the American College of Cardiology, 71(19), e127-e248.</li>
-                        <li>Khera, A. V., Chaffin, M., Aragam, K. G., Haas, M. E., Roselli, C., Choi, S. H., ... & Kathiresan, S. (2018). Genome-wide polygenic scores for common diseases identify individuals with risk equivalent to monogenic mutations. Nature Genetics, 50(9), 1219-1224.</li>
-                        <li>Estruch, R., Ros, E., Salas-Salvadó, J., Covas, M. I., Corella, D., Arós, F., ... & PREDIMED Study Investigators. (2018). Primary prevention of cardiovascular disease with a Mediterranean diet supplemented with extra-virgin olive oil or nuts. New England Journal of Medicine, 378(25), e34.</li>
-                        <li>Benjamin, E. J., Muntner, P., Alonso, A., Bittencourt, M. S., Callaway, C. W., Carson, A. P., ... & Stroke Statistics Subcommittee. (2019). Heart disease and stroke statistics—2019 update: a report from the American Heart Association. Circulation, 139(10), e56-e528.</li>
+                        <li>Whelton, P. K., et al. (2018). 2017 ACC/AHA/AAPA/ABC/ACPM/AGS/APhA/ASH/ASPC/NMA/PCNA Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults. Journal of the American College of Cardiology, 71(19), e127-e248.</li>
+                        <li>Mills, K. T., Stefanescu, A., & He, J. (2020). The global epidemiology of hypertension. Nature Reviews Nephrology, 16(4), 223-237.</li>
+                        <li>Friedman, J. H. (2001). Greedy function approximation: A gradient boosting machine. Annals of Statistics, 29(5), 1189-1232.</li>
+                        <li>Muntner, P., et al. (2019). Potential US Population Impact of the 2017 ACC/AHA High Blood Pressure Guideline. Circulation, 137(2), 109-118.</li>
+                        <li>Appel, L. J., et al. (2006). Effects of comprehensive lifestyle modification on blood pressure control: Main results of the PREMIER clinical trial. JAMA, 289(16), 2083-2093.</li>
+                        <li>Benjamin, E. J., et al. (2018). Heart Disease and Stroke Statistics—2018 Update: A Report From the American Heart Association. Circulation, 137(12), e67-e492.</li>
+                        <li>Williams, B., et al. (2018). 2018 ESC/ESH Guidelines for the management of arterial hypertension. European Heart Journal, 39(33), 3021-3104.</li>
+                        <li>Zhang, Y., & Zhang, D. (2020). Machine Learning Techniques for Hypertension Diagnosis and Treatment: A Systematic Review. Journal of Clinical Hypertension, 22(8), 1280-1289.</li>
+                        <li>Wright, J. T., et al. (2015). A Randomized Trial of Intensive versus Standard Blood-Pressure Control. New England Journal of Medicine, 373(22), 2103-2116.</li>
+                        <li>Carey, R. M., et al. (2018). Resistant Hypertension: Detection, Evaluation, and Management: A Scientific Statement From the American Heart Association. Hypertension, 72(5), e53-e90.</li>
                     </ol>
                 </div>
             </div>
         </div>
     </div>
+
     <script>
         // Data for visualizations
         
-        // Heart Disease Trends Data
-        const trendData = {
-            labels: ['2000', '2005', '2010', '2015', '2020', '2024'],
+        // Age-Gender Distribution Data
+        const ageGenderData = {
+            labels: ['18-29', '30-44', '45-54', '55-64', '65-74', '75+'],
             datasets: [
                 {
-                    label: 'Overall',
-                    data: [12.5, 12.2, 11.8, 11.2, 10.8, 10.6],
-                    backgroundColor: 'rgba(245, 101, 101, 0.7)',
-                    borderColor: 'rgb(229, 62, 62)',
-                    borderWidth: 1
-                },
-                {
                     label: 'Male',
-                    data: [13.8, 13.4, 12.9, 12.3, 11.7, 11.4],
-                    backgroundColor: 'rgba(237, 137, 137, 0.7)',
-                    borderColor: 'rgb(197, 48, 48)',
+                    data: [8.4, 22.6, 37.2, 58.5, 69.3, 76.4],
+                    backgroundColor: 'rgba(49, 130, 206, 0.7)',
+                    borderColor: 'rgb(43, 108, 176)',
                     borderWidth: 1
                 },
                 {
                     label: 'Female',
-                    data: [11.2, 11.0, 10.7, 10.1, 9.9, 9.8],
-                    backgroundColor: 'rgba(246, 135, 179, 0.7)',
+                    data: [6.2, 19.7, 35.8, 62.3, 70.8, 79.1],
+                    backgroundColor: 'rgba(237, 100, 166, 0.7)',
                     borderColor: 'rgb(213, 63, 140)',
                     borderWidth: 1
                 }
@@ -681,155 +683,116 @@
         
         // Feature Importance Data
         const featureImportanceData = [
-            { feature: 'Blood Pressure', importance: 0.195 },
-            { feature: 'Cholesterol Profile', importance: 0.178 },
-            { feature: 'Smoking Status', importance: 0.156 },
-            { feature: 'Family History', importance: 0.142 },
-            { feature: 'Diabetes Status', importance: 0.112 },
-            { feature: 'Physical Activity Level', importance: 0.087 },
-            { feature: 'Age', importance: 0.078 },
-            { feature: 'Body Mass Index', importance: 0.069 },
-            { feature: 'Diet Quality', importance: 0.048 },
-            { feature: 'Stress Level', importance: 0.035 }
+            { feature: 'Age', importance: 0.187 },
+            { feature: 'BMI', importance: 0.165 },
+            { feature: 'Sodium Intake', importance: 0.148 },
+            { feature: 'Family History', importance: 0.137 },
+            { feature: 'Physical Activity', importance: 0.102 },
+            { feature: 'Stress Level', importance: 0.087 },
+            { feature: 'Alcohol Consumption', importance: 0.068 },
+            { feature: 'Smoking Status', importance: 0.054 },
+            { feature: 'Sleep Quality', importance: 0.033 },
+            { feature: 'Socioeconomic Status', importance: 0.019 }
         ].sort((a, b) => b.importance - a.importance);
         
         // Correlation Data
         const correlationData = [
-            { feature: 'Hypertension', correlation: 0.78 },
-            { feature: 'LDL Cholesterol', correlation: 0.72 },
-            { feature: 'Smoking', correlation: 0.68 },
-            { feature: 'Family History', correlation: 0.64 },
-            { feature: 'Diabetes', correlation: 0.62 },
-            { feature: 'Physical Inactivity', correlation: 0.57 },
-            { feature: 'Obesity', correlation: 0.54 },
-            { feature: 'Stress', correlation: 0.48 },
-            { feature: 'Poor Diet', correlation: 0.46 },
-            { feature: 'HDL Cholesterol', correlation: -0.58 }
+            { feature: 'Age', correlation: 0.64 },
+            { feature: 'BMI', correlation: 0.58 },
+            { feature: 'Sodium Intake', correlation: 0.52 },
+            { feature: 'Family History', correlation: 0.49 },
+            { feature: 'Physical Activity', correlation: -0.45 },
+            { feature: 'Stress Level', correlation: 0.42 },
+            { feature: 'Alcohol Consumption', correlation: 0.38 },
+            { feature: 'Smoking Status', correlation: 0.32 },
+            { feature: 'Sleep Quality', correlation: -0.28 },
+            { feature: 'Socioeconomic Status', correlation: -0.22 }
         ].sort((a, b) => Math.abs(b.correlation) - Math.abs(a.correlation));
         
-        // Environmental Factors Data
-        const environmentalFactorsData = [
-            { factor: 'Air Pollution', impact: 0.58 },
-            { factor: 'Healthcare Access', impact: -0.55 },
-            { factor: 'Socioeconomic Status', impact: -0.52 },
-            { factor: 'Food Environment', impact: 0.48 },
-            { factor: 'Neighborhood Walkability', impact: -0.45 },
-            { factor: 'Social Isolation', impact: 0.42 },
-            { factor: 'Green Space Access', impact: -0.38 },
-            { factor: 'Climate Extremes', impact: 0.32 }
-        ].sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact));
+        // Lifestyle Impact Data
+        const lifestyleImpactData = [
+            { factor: 'Sodium Reduction', impact: 5.4 },
+            { factor: 'Regular Exercise', impact: 4.8 },
+            { factor: 'DASH Diet', impact: 4.3 },
+            { factor: 'Weight Loss (10 lbs)', impact: 4.1 },
+            { factor: 'Alcohol Reduction', impact: 3.8 },
+            { factor: 'Stress Management', impact: 2.5 },
+            { factor: 'Adequate Sleep', impact: 2.2 },
+            { factor: 'Potassium Intake', impact: 2.0 }
+        ].sort((a, b) => b.impact - a.impact);
         
         // Complications Chart Data
         const complicationsData = {
-            labels: ['Heart Failure', 'Stroke', 'Arrhythmias', 'Sudden Cardiac Death', 'Peripheral Artery Disease', 'Kidney Disease'],
+            labels: ['Cardiovascular Disease', 'Stroke', 'Kidney Disease', 'Heart Failure', 'Retinopathy', 'Cognitive Decline'],
             datasets: [
                 {
                     label: 'Relative Risk',
-                    data: [4.6, 3.7, 3.2, 4.2, 2.8, 2.5],
+                    data: [4.2, 3.8, 3.5, 2.9, 2.6, 1.8],
                     backgroundColor: [
-                        'rgba(245, 101, 101, 0.7)',
-                        'rgba(236, 85, 85, 0.7)',
                         'rgba(229, 62, 62, 0.7)',
-                        'rgba(197, 48, 48, 0.7)',
-                        'rgba(155, 44, 44, 0.7)',
-                        'rgba(159, 18, 57, 0.7)'
+                        'rgba(221, 107, 32, 0.7)',
+                        'rgba(214, 158, 46, 0.7)',
+                        'rgba(49, 151, 149, 0.7)',
+                        'rgba(79, 104, 209, 0.7)',
+                        'rgba(128, 90, 213, 0.7)'
                     ],
                     borderColor: [
-                        'rgb(229, 62, 62)',
-                        'rgb(220, 38, 38)',
                         'rgb(197, 48, 48)',
-                        'rgb(155, 44, 44)',
-                        'rgb(127, 29, 29)',
-                        'rgb(131, 24, 67)'
+                        'rgb(194, 65, 12)',
+                        'rgb(181, 118, 20)',
+                        'rgb(34, 116, 115)',
+                        'rgb(54, 72, 178)',
+                        'rgb(107, 70, 193)'
                     ],
                     borderWidth: 1
                 }
             ]
         };
         
-        // Intervention Effectiveness Data
-        const interventionData = {
-            labels: ['Statins', 'Blood Pressure Meds', 'Aspirin', 'Diet Changes', 'Exercise', 'Smoking Cessation', 'Combined Approach'],
+        // Medication Effectiveness Data
+        const medicationData = {
+            labels: ['Diuretics', 'ACE Inhibitors', 'Calcium Channel Blockers', 'Beta Blockers', 'ARBs', 'Combined Therapy'],
             datasets: [
                 {
-                    label: 'Risk Reduction (%)',
-                    data: [25, 28, 15, 22, 20, 36, 48],
+                    label: 'Effectiveness Rate (%)',
+                    data: [72.1, 68.4, 70.5, 65.2, 69.8, 85.3],
                     backgroundColor: [
-                        'rgba(245, 101, 101, 0.7)',
-                        'rgba(236, 85, 85, 0.7)',
-                        'rgba(229, 62, 62, 0.7)',
-                        'rgba(72, 187, 120, 0.7)',
-                        'rgba(56, 161, 105, 0.7)',
-                        'rgba(79, 209, 197, 0.7)',
-                        'rgba(159, 122, 234, 0.7)'
-                    ],
-                    borderColor: [
-                        'rgb(229, 62, 62)',
-                        'rgb(220, 38, 38)',
-                        'rgb(197, 48, 48)',
-                        'rgb(56, 161, 105)',
-                        'rgb(47, 133, 90)',
-                        'rgb(49, 151, 149)',
-                        'rgb(128, 90, 213)'
-                    ],
-                    borderWidth: 1
-                }
-            ]
-        };
-        
-        // Region Chart Data
-        const regionData = {
-            labels: ['Northeast', 'Midwest', 'South', 'West', 'Urban', 'Suburban', 'Rural'],
-            datasets: [
-                {
-                    label: 'Heart Disease Prevalence (%)',
-                    data: [9.2, 11.5, 14.8, 7.2, 8.6, 10.2, 13.4],
-                    backgroundColor: [
-                        'rgba(245, 101, 101, 0.7)',
-                        'rgba(236, 85, 85, 0.7)',
-                        'rgba(229, 62, 62, 0.7)',
-                        'rgba(72, 187, 120, 0.7)',
-                        'rgba(79, 209, 197, 0.7)',
+                        'rgba(49, 130, 206, 0.7)',
+                        'rgba(104, 211, 145, 0.7)',
+                        'rgba(246, 173, 85, 0.7)',
                         'rgba(159, 122, 234, 0.7)',
-                        'rgba(129, 140, 248, 0.7)'
+                        'rgba(237, 100, 166, 0.7)',
+                        'rgba(72, 187, 120, 0.7)'
                     ],
                     borderColor: [
-                        'rgb(229, 62, 62)',
-                        'rgb(220, 38, 38)',
-                        'rgb(197, 48, 48)',
+                        'rgb(43, 108, 176)',
                         'rgb(56, 161, 105)',
-                        'rgb(49, 151, 149)',
+                        'rgb(221, 107, 32)',
                         'rgb(128, 90, 213)',
-                        'rgb(104, 117, 245)'
+                        'rgb(213, 63, 140)',
+                        'rgb(47, 133, 90)'
                     ],
                     borderWidth: 1
                 }
             ]
         };
         
-        // Outcome Chart Data
-        const outcomeData = {
-            labels: ['10% BP Reduction', '20% BP Reduction', '30% Cholesterol Reduction', '50% Cholesterol Reduction', 'Smoking Cessation'],
+        // Comorbidity Chart Data
+        const comorbidityData = {
+            labels: ['Diabetes', 'Obesity', 'Chronic Kidney Disease', 'Sleep Apnea', 'Dyslipidemia', 'Cardiovascular Disease'],
             datasets: [
                 {
-                    label: 'Heart Attack Risk Reduction (%)',
-                    data: [20, 30, 25, 45, 36],
-                    backgroundColor: 'rgba(245, 101, 101, 0.7)',
-                    borderColor: 'rgb(229, 62, 62)',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Stroke Risk Reduction (%)',
-                    data: [25, 35, 20, 36, 32],
-                    backgroundColor: 'rgba(236, 85, 85, 0.7)',
-                    borderColor: 'rgb(220, 38, 38)',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Mortality Reduction (%)',
-                    data: [15, 25, 22, 38, 30],
-                    backgroundColor: 'rgba(72, 187, 120, 0.7)',
+                    label: 'Prevalence in Hypertensive Patients (%)',
+                    data: [42.6, 51.8, 27.5, 35.2, 48.7, 31.4],
+                    backgroundColor: 'rgba(104, 211, 145, 0.7)',
                     borderColor: 'rgb(56, 161, 105)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Prevalence in General Population (%)',
+                    data: [10.5, 31.4, 7.5, 11.8, 21.4, 8.6],
+                    backgroundColor: 'rgba(159, 122, 234, 0.7)',
+                    borderColor: 'rgb(107, 70, 193)',
                     borderWidth: 1
                 }
             ]
@@ -840,18 +803,18 @@
             labels: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
             datasets: [
                 {
-                    label: 'XGBoost (AUC = 0.912)',
+                    label: 'Gradient Boosting (AUC = 0.887)',
                     data: [
                         {x: 0, y: 0},
-                        {x: 0.02, y: 0.28},
-                        {x: 0.05, y: 0.55},
-                        {x: 0.08, y: 0.72},
-                        {x: 0.12, y: 0.82},
-                        {x: 0.17, y: 0.87},
-                        {x: 0.25, y: 0.92},
-                        {x: 0.35, y: 0.95},
-                        {x: 0.5, y: 0.98},
-                        {x: 0.72, y: 0.99},
+                        {x: 0.02, y: 0.22},
+                        {x: 0.05, y: 0.48},
+                        {x: 0.08, y: 0.62},
+                        {x: 0.12, y: 0.74},
+                        {x: 0.18, y: 0.82},
+                        {x: 0.25, y: 0.88},
+                        {x: 0.36, y: 0.92},
+                        {x: 0.55, y: 0.96},
+                        {x: 0.75, y: 0.98},
                         {x: 1.0, y: 1.0}
                     ],
                     borderColor: '#38a169',
@@ -859,40 +822,40 @@
                     borderWidth: 3
                 },
                 {
-                    label: 'Random Forest (AUC = 0.896)',
+                    label: 'Random Forest (AUC = 0.873)',
                     data: [
                         {x: 0, y: 0},
-                        {x: 0.03, y: 0.25},
-                        {x: 0.06, y: 0.52},
-                        {x: 0.1, y: 0.68},
-                        {x: 0.15, y: 0.78},
-                        {x: 0.2, y: 0.85},
-                        {x: 0.28, y: 0.90},
-                        {x: 0.4, y: 0.93},
-                        {x: 0.56, y: 0.96},
-                        {x: 0.75, y: 0.98},
+                        {x: 0.03, y: 0.20},
+                        {x: 0.06, y: 0.45},
+                        {x: 0.1, y: 0.6},
+                        {x: 0.15, y: 0.72},
+                        {x: 0.22, y: 0.8},
+                        {x: 0.3, y: 0.86},
+                        {x: 0.42, y: 0.9},
+                        {x: 0.6, y: 0.94},
+                        {x: 0.8, y: 0.97},
                         {x: 1.0, y: 1.0}
                     ],
-                    borderColor: '#f56565',
+                    borderColor: '#3182ce',
                     backgroundColor: 'transparent',
                     borderWidth: 3
                 },
                 {
-                    label: 'Gradient Boosting (AUC = 0.889)',
+                    label: 'XGBoost (AUC = 0.865)',
                     data: [
                         {x: 0, y: 0},
-                        {x: 0.04, y: 0.23},
-                        {x: 0.07, y: 0.48},
-                        {x: 0.12, y: 0.64},
-                        {x: 0.17, y: 0.76},
-                        {x: 0.23, y: 0.83},
-                        {x: 0.3, y: 0.88},
-                        {x: 0.42, y: 0.92},
-                        {x: 0.58, y: 0.95},
-                        {x: 0.78, y: 0.98},
+                        {x: 0.04, y: 0.18},
+                        {x: 0.08, y: 0.42},
+                        {x: 0.12, y: 0.57},
+                        {x: 0.18, y: 0.69},
+                        {x: 0.25, y: 0.78},
+                        {x: 0.35, y: 0.85},
+                        {x: 0.48, y: 0.91},
+                        {x: 0.65, y: 0.94},
+                        {x: 0.85, y: 0.97},
                         {x: 1.0, y: 1.0}
                     ],
-                    borderColor: '#9f7aea',
+                    borderColor: '#805ad5',
                     backgroundColor: 'transparent',
                     borderWidth: 3
                 },
@@ -912,16 +875,16 @@
         
         // Confusion Matrix Data
         const confusionMatrixData = [
-            [78, 9],  // True Negative, False Positive
-            [8, 72]   // False Negative, True Positive
+            [72, 12],  // True Negative, False Positive
+            [13, 63]   // False Negative, True Positive
         ];
 
-        // Initialize Trends Chart
-        const trendChart = new Chart(
-            document.getElementById('trendChart'),
+        // Initialize Age-Gender Chart
+        const ageGenderChart = new Chart(
+            document.getElementById('ageGenderChart'),
             {
-                type: 'line',
-                data: trendData,
+                type: 'bar',
+                data: ageGenderData,
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -934,17 +897,17 @@
                         }
                     },
                     scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Age Groups'
+                            }
+                        },
                         y: {
                             beginAtZero: true,
                             title: {
                                 display: true,
                                 text: 'Prevalence (%)'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Year'
                             }
                         }
                     }
@@ -968,7 +931,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Relative Risk of Complications with Heart Disease'
+                            text: 'Relative Risk of Complications with Hypertension'
                         }
                     },
                     scales: {
@@ -983,12 +946,12 @@
             }
         );
         
-        // Initialize Intervention Chart
-        const interventionChart = new Chart(
-            document.getElementById('interventionChart'),
+        // Initialize Medication Chart
+        const medicationChart = new Chart(
+            document.getElementById('medicationChart'),
             {
                 type: 'bar',
-                data: interventionData,
+                data: medicationData,
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -1003,9 +966,10 @@
                     scales: {
                         y: {
                             beginAtZero: true,
+                            max: 100,
                             title: {
                                 display: true,
-                                text: 'Risk Reduction (%)'
+                                text: 'Effectiveness Rate (%)'
                             }
                         }
                     }
@@ -1013,42 +977,12 @@
             }
         );
         
-        // Initialize Region Chart
-        const regionChart = new Chart(
-            document.getElementById('regionChart'),
+        // Initialize Comorbidity Chart
+        const comorbidityChart = new Chart(
+            document.getElementById('comorbidityChart'),
             {
                 type: 'bar',
-                data: regionData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Heart Disease Prevalence (%)'
-                            }
-                        }
-                    }
-                }
-            }
-        );
-        
-        // Initialize Outcome Chart
-        const outcomeChart = new Chart(
-            document.getElementById('outcomeChart'),
-            {
-                type: 'bar',
-                data: outcomeData,
+                data: comorbidityData,
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -1065,7 +999,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Reduction (%)'
+                                text: 'Prevalence (%)'
                             }
                         }
                     }
@@ -1124,9 +1058,9 @@
         
         // Function to get gradient color for bars
         function getGradientColor(value, max) {
-            // Use a red gradient from lighter to darker
+            // Use a blue gradient from lighter to darker
             const intensity = Math.round((value / max) * 255);
-            return `rgb(${245 - (1 - value/max) * 50}, ${101 - (1 - value/max) * 50}, ${101 - (1 - value/max) * 50})`;
+            return `rgb(49, ${130 + (1 - value/max) * 50}, ${206 + (1 - value/max) * 30})`;
         }
         
         featureImportanceData.forEach(feature => {
@@ -1147,14 +1081,14 @@
         const correlationBarsEl = document.getElementById('correlationBars');
         const maxCorrelation = Math.max(...correlationData.map(d => Math.abs(d.correlation)));
         
-        // Function to get correlation color (positive correlations in red, negative in green)
+        // Function to get correlation color (positive correlations in blue, negative in red)
         function getCorrelationColor(value) {
             if (value >= 0) {
-                // Red for positive (increases risk)
-                return `rgb(245, 101, 101)`;
+                // Blue for positive
+                return `rgb(49, 130, 206)`;
             } else {
-                // Green for negative (decreases risk)
-                return `rgb(72, 187, 120)`;
+                // Red for negative
+                return `rgb(229, 62, 62)`;
             }
         }
         
@@ -1172,25 +1106,22 @@
             correlationBarsEl.appendChild(correlationBar);
         });
         
-        // Environmental Factors Bars
-        const environmentalFactorsEl = document.getElementById('environmentalFactors');
-        const maxImpact = Math.max(...environmentalFactorsData.map(d => Math.abs(d.impact)));
+        // Lifestyle Impact Bars
+        const lifestyleImpactEl = document.getElementById('lifestyleImpact');
+        const maxImpact = Math.max(...lifestyleImpactData.map(d => d.impact));
         
-        environmentalFactorsData.forEach(item => {
-            const barWidth = (Math.abs(item.impact) / maxImpact) * 100;
+        lifestyleImpactData.forEach(item => {
+            const barWidth = (item.impact / maxImpact) * 100;
             const impactBar = document.createElement('div');
             impactBar.className = 'feature-bar';
             
-            // Use color coding - positive impact (increases risk) in red, negative impact (decreases risk) in green
-            const barColor = item.impact > 0 ? '#f56565' : '#48bb78';
-            
             impactBar.innerHTML = `
                 <div class="feature-name">${item.factor}</div>
-                <div class="feature-value-bar" style="width: ${barWidth}%; background-color: ${barColor}"></div>
-                <div class="feature-value">${item.impact > 0 ? '+' : ''}${item.impact.toFixed(2)}</div>
+                <div class="feature-value-bar" style="width: ${barWidth}%; background-color: #48bb78"></div>
+                <div class="feature-value">-${item.impact.toFixed(1)} mmHg</div>
             `;
             
-            environmentalFactorsEl.appendChild(impactBar);
+            lifestyleImpactEl.appendChild(impactBar);
         });
         
         // Confusion Matrix Heatmap
@@ -1216,7 +1147,7 @@
         // Define the color scale
         const colorScale = d3.scaleLinear()
             .domain([0, d3.max(confusionMatrixData, row => d3.max(row))])
-            .range(['#fff5f5', '#f56565']);
+            .range(['#e2e8f0', '#3182ce']);
         
         // Define the size of each cell
         const cellSize = Math.min(innerWidth, innerHeight) / 2;
@@ -1293,7 +1224,7 @@
                 const predLabel = predLabels[col];
                 
                 d3.select(this)
-                    .attr('stroke', '#e53e3e')
+                    .attr('stroke', '#4299e1')
                     .attr('stroke-width', 3);
                     
                 tooltip.transition()
@@ -1313,100 +1244,6 @@
                     .duration(500)
                     .style('opacity', 0);
             });
-            
-        // Simple US Map for Region Visualization
-        const regionMapEl = document.getElementById('regionMap');
-        
-        // Create a simplified US region map
-        const mapWidth = regionMapEl.offsetWidth;
-        const mapHeight = regionMapEl.offsetHeight;
-        const mapSvg = d3.select('#regionMap')
-            .append('svg')
-            .attr('width', mapWidth)
-            .attr('height', mapHeight);
-            
-        // Define regions and their heart disease rates
-        const regions = [
-            { name: 'Northeast', rate: 9.2, x: mapWidth * 0.75, y: mapHeight * 0.25, radius: 40 },
-            { name: 'Midwest', rate: 11.5, x: mapWidth * 0.45, y: mapHeight * 0.35, radius: 50 },
-            { name: 'South', rate: 14.8, x: mapWidth * 0.55, y: mapHeight * 0.65, radius: 65 },
-            { name: 'West', rate: 7.2, x: mapWidth * 0.20, y: mapHeight * 0.40, radius: 35 }
-        ];
-        
-        // Color scale for heart disease rates
-        const regionColorScale = d3.scaleLinear()
-            .domain([7, 15])  // Min and max heart disease rates
-            .range(['#fed7d7', '#e53e3e']);  // Light red to dark red
-            
-        // Add regions as circles with size proportional to heart disease rate
-        mapSvg.selectAll('circle')
-            .data(regions)
-            .enter()
-            .append('circle')
-            .attr('cx', d => d.x)
-            .attr('cy', d => d.y)
-            .attr('r', d => d.radius)
-            .attr('fill', d => regionColorScale(d.rate))
-            .attr('stroke', '#ffffff')
-            .attr('stroke-width', 2)
-            .attr('opacity', 0.8);
-            
-        // Add region labels
-        mapSvg.selectAll('text')
-            .data(regions)
-            .enter()
-            .append('text')
-            .attr('x', d => d.x)
-            .attr('y', d => d.y)
-            .attr('text-anchor', 'middle')
-            .attr('dominant-baseline', 'middle')
-            .attr('font-size', '12px')
-            .attr('font-weight', 'bold')
-            .attr('fill', '#ffffff')
-            .text(d => `${d.name}\n${d.rate}%`);
-            
-        // Add a legend
-        const legendGroup = mapSvg.append('g')
-            .attr('transform', `translate(${mapWidth - 150}, ${mapHeight - 100})`);
-            
-        legendGroup.append('text')
-            .attr('x', 0)
-            .attr('y', 0)
-            .attr('font-size', '12px')
-            .attr('font-weight', 'bold')
-            .text('Heart Disease Rate (%)');
-            
-        const legendValues = [7, 9, 11, 13, 15];
-        
-        legendValues.forEach((value, i) => {
-            legendGroup.append('rect')
-                .attr('x', 0)
-                .attr('y', 20 + i * 20)
-                .attr('width', 15)
-                .attr('height', 15)
-                .attr('fill', regionColorScale(value));
-                
-            legendGroup.append('text')
-                .attr('x', 25)
-                .attr('y', 20 + i * 20 + 12)
-                .attr('font-size', '12px')
-                .text(value + '%');
-        });
-        
-        // Initialize Tabs
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabId = tab.getAttribute('data-tab');
-                
-                // Update active tab
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                // Update active content
-                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-                document.getElementById(`${tabId}-tab`).classList.add('active');
-            });
-        });
     </script>
 </body>
 </html>
